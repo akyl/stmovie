@@ -8,12 +8,26 @@
 
 import UIKit
 
-class MainViewController: UIViewController, PhotoBrowserDelegate {
+class MainViewController: UIViewController {
     
-    let chooseButton: UIButton = {
+    let selectButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Choose video", for: .normal)
+        button.setTitle("Select and Play video", for: .normal)
+        return button
+    }()
+    
+    let recordButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Record and Save video", for: .normal)
+        return button
+    }()
+    
+    let mergeButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Merge video", for: .normal)
         return button
     }()
 
@@ -22,12 +36,22 @@ class MainViewController: UIViewController, PhotoBrowserDelegate {
         
         view.backgroundColor = .black
         
-        view.addSubview(chooseButton)
+        view.addSubview(recordButton)
+        view.addSubview(selectButton)
+        view.addSubview(mergeButton)
         
-        chooseButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        chooseButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        recordButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        recordButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
-        chooseButton.addTarget(self, action: #selector(chooseButtonTapped), for: .touchUpInside)
+        selectButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        selectButton.bottomAnchor.constraint(equalTo: recordButton.topAnchor, constant: -20).isActive = true
+        
+        mergeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        mergeButton.topAnchor.constraint(equalTo: recordButton.bottomAnchor, constant: 20).isActive = true
+        
+        recordButton.addTarget(self, action: #selector(recordButtonTapped), for: .touchUpInside)
+        selectButton.addTarget(self, action: #selector(selectButtonTapped), for: .touchUpInside)
+        mergeButton.addTarget(self, action: #selector(mergeButtonTapped), for: .touchUpInside)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -36,8 +60,18 @@ class MainViewController: UIViewController, PhotoBrowserDelegate {
     }
     
     @objc
-    func chooseButtonTapped () {
-        
+    func selectButtonTapped () {
+        navigationController?.pushViewController(PlayVideoViewController(), animated: true)
+    }
+    
+    @objc
+    func recordButtonTapped () {
+        navigationController?.pushViewController(RecordVideoViewController(), animated: true)
+    }
+    
+    @objc
+    func mergeButtonTapped () {
+        navigationController?.pushViewController(MergeVideoViewController(), animated: true)
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
