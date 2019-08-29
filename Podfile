@@ -6,5 +6,7 @@ target 'stmovie' do
   use_frameworks!
 
   # Pods for stmovie
+  pod 'YPImagePicker'
+  pod 'lottie-ios'
 
 end
