@@ -17,6 +17,8 @@ class SimpleVideoViewController: UIViewController {
     var playerLayer: AVPlayerLayer!
     var videoURL: URL?
     
+    let animationNames = ["9squared-AIBoardman", "base64Test", "Boat_Loader", "FirstText", "GeometryTransformTest", "HamburgerArrow", "IconTransitions", "keypathTest", "LottieLogo1_masked", "LottieLogo1", "LottieLogo2", "PinJump"]
+    
     /*
     let lottiesView: UIView = {
         let v = UIView()
@@ -62,7 +64,7 @@ class SimpleVideoViewController: UIViewController {
         
         lottiesCollectionView.delegate = self
         lottiesCollectionView.dataSource = self
-        lottiesCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cellId")
+        lottiesCollectionView.register(LottieViewCell.self, forCellWithReuseIdentifier: "cellId")
         
         playVideo(videoURL: videoURL!)
     }
@@ -103,12 +105,15 @@ class SimpleVideoViewController: UIViewController {
 
 extension SimpleVideoViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return animationNames.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath)
-        cell.backgroundColor = .red
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! LottieViewCell
+        //cell.backgroundColor = .red
+        cell.frame = CGRect(x: cell.frame.origin.x, y: cell.frame.origin.y, width: cell.frame.size.width, height: 100)
+        let name = animationNames[indexPath.row]
+        cell.addAnimation(name)
         return cell
     }
 }
