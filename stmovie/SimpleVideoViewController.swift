@@ -16,17 +16,9 @@ class SimpleVideoViewController: UIViewController {
     var player: AVPlayer!
     var playerLayer: AVPlayerLayer!
     var videoURL: URL?
+    let animationView = AnimationView()
     
     let animationNames = ["9squared-AIBoardman", "base64Test", "Boat_Loader", "FirstText", "GeometryTransformTest", "HamburgerArrow", "IconTransitions", "keypathTest", "LottieLogo1_masked", "LottieLogo1", "LottieLogo2", "PinJump"]
-    
-    /*
-    let lottiesView: UIView = {
-        let v = UIView()
-        v.translatesAutoresizingMaskIntoConstraints = false
-        v.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.4)
-        return v
-    }()
-    */
     
     let exportButton: UIButton = {
         let button = UIButton()
@@ -57,7 +49,7 @@ class SimpleVideoViewController: UIViewController {
         
         lottiesCollectionView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         lottiesCollectionView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
-        lottiesCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        lottiesCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16.0).isActive = true
         lottiesCollectionView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         
         exportButton.addTarget(self, action: #selector(handleExport), for: .touchUpInside)
@@ -85,21 +77,47 @@ class SimpleVideoViewController: UIViewController {
             self?.player?.play()
         }
         
+        
+        
         playerLayer = AVPlayerLayer(player: player)
         playerLayer.frame = self.view.bounds
         
+       
         let syncLayer = AVSynchronizedLayer(playerItem: player.currentItem!)
         syncLayer.frame = CGRect(x: 15,y: 15,width: 100,height: 100)
-        //let image = UIImage(named: "star")?.cgImage
         
-        //syncLayer.contents = image
+        let animation = Animation.named("LottieLogo1", subdirectory: "LottieAnimations")
+        animationView.animation = animation
+        animationView.contentMode = .scaleAspectFill
+        animationView.frame = syncLayer.bounds
+        animationView.backgroundBehavior = .pauseAndRestore
+        
+        
+        
+        syncLayer.contents = animationView
         
         playerLayer.addSublayer(syncLayer)
         
         view.layer.addSublayer(playerLayer)
-       
         
         player.play()
+        
+        animationView.play(fromProgress: 0,
+                           toProgress: 1,
+                           loopMode: LottieLoopMode.loop,
+                           completion: { (finished) in
+                            if finished {
+                                print("Animation Complete")
+                            } else {
+                                print("Animation cancelled")
+                            }
+        })
+    }
+    
+    func addLottieAnimation(_ animationName: String) {
+        
+        
+        
     }
 }
 
@@ -115,5 +133,10 @@ extension SimpleVideoViewController: UICollectionViewDelegate, UICollectionViewD
         let name = animationNames[indexPath.row]
         cell.addAnimation(name)
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let animName = animationNames[indexPath.row]
+        addLottieAnimation(animName)
     }
 }
