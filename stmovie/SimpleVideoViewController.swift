@@ -10,6 +10,7 @@ import UIKit
 import AVFoundation
 import Lottie
 import AVKit
+import Photos
 
 class SimpleVideoViewController: UIViewController {
  
@@ -18,7 +19,7 @@ class SimpleVideoViewController: UIViewController {
     var videoURL: URL?
     let animationView = AnimationView()
     
-    let animationNames = ["9squared-AIBoardman", "base64Test", "Boat_Loader", "FirstText", "GeometryTransformTest", "HamburgerArrow", "IconTransitions", "keypathTest", "LottieLogo1_masked", "LottieLogo1", "LottieLogo2", "PinJump"]
+    let animationNames = ["9squares-AIBoardman", "base64Test", "Boat_Loader", "FirstText", "GeometryTransformTest", "HamburgerArrow", "IconTransitions", "keypathTest", "LottieLogo1_masked", "LottieLogo1", "LottieLogo2", "PinJump", "setValueTest", "Switch_States", "Switch", "timeremap", "TwitterHeart", "TwitterHeartButton", "vcTransition1", "vcTransition2", "Watermelon"]
     
     let exportButton: UIButton = {
         let button = UIButton()
@@ -62,6 +63,38 @@ class SimpleVideoViewController: UIViewController {
     }
     
     @objc func handleExport() {
+        guard let videoAsset = player.currentItem?.asset else { return }
+        let exportSession = AVAssetExportSession(asset: videoAsset, presetName: AVAssetExportPresetHighestQuality)
+        exportSession?.outputFileType = AVFileType.mp4
+        let exportPath = NSTemporaryDirectory().appendingFormat("/video.mov")
+        let exportUrl = URL.init(fileURLWithPath: exportPath)
+        exportSession?.outputURL = exportUrl
+        exportSession?.metadata = videoAsset.metadata
+        exportSession?.exportAsynchronously {
+            if exportSession?.status == .completed {
+                guard let outputUrl = exportSession?.outputURL else { return }
+                
+                PHPhotoLibrary.shared().performChanges({ PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputUrl) }) { saved, error in
+                        let success = saved && (error == nil)
+                        let title = success ? "Success" : "Error"
+                        let message = success ? "Video saved" : "Failed to save video"
+                        
+                        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    
+                }
+            } else if exportSession?.status == .cancelled {
+                let alert = UIAlertController(title: "Attention", message: "Cancelled", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                let alert = UIAlertController(title: "Error", message: "Unknown error while exporting", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
+        }
+        
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -89,15 +122,11 @@ class SimpleVideoViewController: UIViewController {
         let animation = Animation.named("LottieLogo1", subdirectory: "LottieAnimations")
         animationView.animation = animation
         animationView.contentMode = .scaleAspectFill
-        animationView.frame = syncLayer.bounds
         animationView.backgroundBehavior = .pauseAndRestore
         
-        
-        
-        syncLayer.contents = animationView
-        
-        playerLayer.addSublayer(syncLayer)
-        
+        let image = UIImage(named: "star")?.cgImage
+        syncLayer.contents = image
+    
         view.layer.addSublayer(playerLayer)
         
         player.play()

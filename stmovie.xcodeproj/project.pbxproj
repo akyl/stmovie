@@ -12,7 +12,6 @@
 		16E088F4230C676600921C11 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E088F3230C676600921C11 /* MainViewController.swift */; };
 		16E088FC230C676C00921C11 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 16E088FA230C676C00921C11 /* LaunchScreen.storyboard */; };
 		A4BBF38F2318E1A200E7B1D3 /* LottieViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BBF38E2318E1A200E7B1D3 /* LottieViewCell.swift */; };
-		A4BBF3C02318E7B700E7B1D3 /* LottieAnimations in Resources */ = {isa = PBXBuildFile; fileRef = A4BBF3BF2318E7B600E7B1D3 /* LottieAnimations */; };
 		A4BBF3C12318E7DA00E7B1D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 16E088F8230C676C00921C11 /* Assets.xcassets */; };
 		BAD1FD60320DA930A568688A /* Pods_stmovie.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB2FF6FAC6789D269E234A7F /* Pods_stmovie.framework */; };
 /* End PBXBuildFile section */
@@ -50,7 +49,6 @@
 		A4BBF3A52318E5F000E7B1D3 /* vcTransition2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = vcTransition2.json; sourceTree = "<group>"; };
 		A4BBF3A62318E5F000E7B1D3 /* Watermelon.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Watermelon.json; sourceTree = "<group>"; };
 		A4BBF3A72318E5F100E7B1D3 /* TypeFace */ = {isa = PBXFileReference; lastKnownFileType = folder; path = TypeFace; sourceTree = "<group>"; };
-		A4BBF3BF2318E7B600E7B1D3 /* LottieAnimations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = LottieAnimations; path = stmovie/LottieAnimations; sourceTree = "<group>"; };
 		BB2FF6FAC6789D269E234A7F /* Pods_stmovie.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_stmovie.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9675536325CB34210FBEF5D /* Pods-stmovie.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-stmovie.release.xcconfig"; path = "Target Support Files/Pods-stmovie/Pods-stmovie.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,7 +68,6 @@
 		16E088E5230C676600921C11 = {
 			isa = PBXGroup;
 			children = (
-				A4BBF3BF2318E7B600E7B1D3 /* LottieAnimations */,
 				16E088F0230C676600921C11 /* stmovie */,
 				16E088EF230C676600921C11 /* Products */,
 				5894532B63324685E9C0DAD4 /* Pods */,
@@ -209,7 +206,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A4BBF3C12318E7DA00E7B1D3 /* Assets.xcassets in Resources */,
-				A4BBF3C02318E7B700E7B1D3 /* LottieAnimations in Resources */,
 				16E088FC230C676C00921C11 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
