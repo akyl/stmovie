@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		160F25ED231D74A30075EF0B /* LottieAnimations in Resources */ = {isa = PBXBuildFile; fileRef = 160F25EC231D74A30075EF0B /* LottieAnimations */; };
+		160F25EF231D8BA20075EF0B /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160F25EE231D8BA20075EF0B /* VideoHelper.swift */; };
 		16345805231708C8000D572A /* SimpleVideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16345804231708C8000D572A /* SimpleVideoViewController.swift */; };
 		16E088F2230C676600921C11 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E088F1230C676600921C11 /* AppDelegate.swift */; };
 		16E088F4230C676600921C11 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E088F3230C676600921C11 /* MainViewController.swift */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		160F25EC231D74A30075EF0B /* LottieAnimations */ = {isa = PBXFileReference; lastKnownFileType = folder; name = LottieAnimations; path = stmovie/LottieAnimations; sourceTree = "<group>"; };
+		160F25EE231D8BA20075EF0B /* VideoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
 		16345804231708C8000D572A /* SimpleVideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleVideoViewController.swift; sourceTree = "<group>"; };
 		16E088EE230C676600921C11 /* stmovie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = stmovie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		16E088F1230C676600921C11 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -68,6 +72,7 @@
 		16E088E5230C676600921C11 = {
 			isa = PBXGroup;
 			children = (
+				160F25EC231D74A30075EF0B /* LottieAnimations */,
 				16E088F0230C676600921C11 /* stmovie */,
 				16E088EF230C676600921C11 /* Products */,
 				5894532B63324685E9C0DAD4 /* Pods */,
@@ -94,6 +99,7 @@
 				16E088FA230C676C00921C11 /* LaunchScreen.storyboard */,
 				16E088FD230C676C00921C11 /* Info.plist */,
 				A4BBF38E2318E1A200E7B1D3 /* LottieViewCell.swift */,
+				160F25EE231D8BA20075EF0B /* VideoHelper.swift */,
 			);
 			path = stmovie;
 			sourceTree = "<group>";
@@ -205,6 +211,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				160F25ED231D74A30075EF0B /* LottieAnimations in Resources */,
 				A4BBF3C12318E7DA00E7B1D3 /* Assets.xcassets in Resources */,
 				16E088FC230C676C00921C11 /* LaunchScreen.storyboard in Resources */,
 			);
@@ -262,6 +269,7 @@
 				16E088F4230C676600921C11 /* MainViewController.swift in Sources */,
 				16E088F2230C676600921C11 /* AppDelegate.swift in Sources */,
 				16345805231708C8000D572A /* SimpleVideoViewController.swift in Sources */,
+				160F25EF231D8BA20075EF0B /* VideoHelper.swift in Sources */,
 				A4BBF38F2318E1A200E7B1D3 /* LottieViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

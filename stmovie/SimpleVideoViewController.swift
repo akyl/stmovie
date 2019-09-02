@@ -37,11 +37,18 @@ class SimpleVideoViewController: UIViewController {
         return cv
     }()
     
+    let activityMonitor: UIActivityIndicatorView = {
+        let am = UIActivityIndicatorView()
+        am.translatesAutoresizingMaskIntoConstraints = false
+        return am
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.addSubview(lottiesCollectionView)
         view.addSubview(exportButton)
+        view.addSubview(activityMonitor)
 
         exportButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
         exportButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -16).isActive = true
@@ -53,6 +60,9 @@ class SimpleVideoViewController: UIViewController {
         lottiesCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -16.0).isActive = true
         lottiesCollectionView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         
+        activityMonitor.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        activityMonitor.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
         exportButton.addTarget(self, action: #selector(handleExport), for: .touchUpInside)
         
         lottiesCollectionView.delegate = self
@@ -63,39 +73,71 @@ class SimpleVideoViewController: UIViewController {
     }
     
     @objc func handleExport() {
+        
+        self.activityMonitor.startAnimating()
+        
         guard let videoAsset = player.currentItem?.asset else { return }
-        let exportSession = AVAssetExportSession(asset: videoAsset, presetName: AVAssetExportPresetHighestQuality)
-        exportSession?.outputFileType = AVFileType.mp4
-        let exportPath = NSTemporaryDirectory().appendingFormat("/video.mov")
-        let exportUrl = URL.init(fileURLWithPath: exportPath)
-        exportSession?.outputURL = exportUrl
-        exportSession?.metadata = videoAsset.metadata
-        exportSession?.exportAsynchronously {
-            if exportSession?.status == .completed {
-                guard let outputUrl = exportSession?.outputURL else { return }
+        
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .short
+        let date = dateFormatter.string(from: Date())
+        let url = documentDirectory.appendingPathComponent("mergeVideo-\(date).mov")
+        
+        guard let exporter = AVAssetExportSession(asset: videoAsset, presetName: AVAssetExportPresetHighestQuality) else { return }
+        exporter.outputURL = url
+        exporter.outputFileType = AVFileType.mov
+        exporter.shouldOptimizeForNetworkUse = true
+        
+        exporter.exportAsynchronously() {
+            DispatchQueue.main.async {
+                self.exportDidFinish(exporter)
+            }
+        }
+    }
+    
+    func savedPhotosAvailable() -> Bool {
+        guard !UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) else { return true }
+        
+        let alert = UIAlertController(title: "Not Available", message: "No Saved Album found", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
+        return false
+    }
+    
+    func exportDidFinish(_ session: AVAssetExportSession) {
+        
+        guard session.status == AVAssetExportSession.Status.completed,
+            let outputURL = session.outputURL else { return }
+        
+        let saveVideoToPhotos = {
+            
+            self.activityMonitor.stopAnimating()
+            
+            PHPhotoLibrary.shared().performChanges({ PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputURL) }) { saved, error in
+                let success = saved && (error == nil)
+                let title = success ? "Success" : "Error"
+                let message = success ? "Video saved" : "Failed to save video"
                 
-                PHPhotoLibrary.shared().performChanges({ PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputUrl) }) { saved, error in
-                        let success = saved && (error == nil)
-                        let title = success ? "Success" : "Error"
-                        let message = success ? "Video saved" : "Failed to save video"
-                        
-                        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
-                        self.present(alert, animated: true, completion: nil)
-                    
-                }
-            } else if exportSession?.status == .cancelled {
-                let alert = UIAlertController(title: "Attention", message: "Cancelled", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-            } else {
-                let alert = UIAlertController(title: "Error", message: "Unknown error while exporting", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: nil))
+                let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.cancel, handler: {
+                    (alert: UIAlertAction!) in
+                     self.dismiss(animated: true, completion: nil)
+                }))
                 self.present(alert, animated: true, completion: nil)
             }
         }
         
-        self.dismiss(animated: true, completion: nil)
+        if PHPhotoLibrary.authorizationStatus() != .authorized {
+            PHPhotoLibrary.requestAuthorization({ status in
+                if status == .authorized {
+                    saveVideoToPhotos()
+                }
+            })
+        } else {
+            saveVideoToPhotos()
+        }
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -109,44 +151,32 @@ class SimpleVideoViewController: UIViewController {
             self?.player?.seek(to: .zero)
             self?.player?.play()
         }
-        
-        
-        
+       
         playerLayer = AVPlayerLayer(player: player)
         playerLayer.frame = self.view.bounds
-        
        
-        let syncLayer = AVSynchronizedLayer(playerItem: player.currentItem!)
-        syncLayer.frame = CGRect(x: 15,y: 15,width: 100,height: 100)
-        
-        let animation = Animation.named("LottieLogo1", subdirectory: "LottieAnimations")
-        animationView.animation = animation
-        animationView.contentMode = .scaleAspectFill
+        animationView.contentMode = .scaleAspectFit
         animationView.backgroundBehavior = .pauseAndRestore
+        animationView.loopMode = .loop
+        animationView.frame = CGRect(x:0, y: playerLayer.frame.maxY-216, width: view.frame.width / 10, height: 100)
+        let animationLayer = animationView.layer
         
-        let image = UIImage(named: "star")?.cgImage
-        syncLayer.contents = image
-    
+        animationLayer.frame = CGRect(x:0, y: playerLayer.frame.maxY-216, width: view.frame.width / 10, height: 100)
+        
+        playerLayer.addSublayer(animationLayer)
+        
         view.layer.addSublayer(playerLayer)
+        
+        view.addSubview(animationView)
         
         player.play()
         
-        animationView.play(fromProgress: 0,
-                           toProgress: 1,
-                           loopMode: LottieLoopMode.loop,
-                           completion: { (finished) in
-                            if finished {
-                                print("Animation Complete")
-                            } else {
-                                print("Animation cancelled")
-                            }
-        })
+        animationView.play()
     }
     
     func addLottieAnimation(_ animationName: String) {
-        
-        
-        
+        animationView.animation = Animation.named(animationName, subdirectory: "LottieAnimations")
+        animationView.play()
     }
 }
 
@@ -169,3 +199,4 @@ extension SimpleVideoViewController: UICollectionViewDelegate, UICollectionViewD
         addLottieAnimation(animName)
     }
 }
+
